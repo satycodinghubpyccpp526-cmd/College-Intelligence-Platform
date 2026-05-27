@@ -272,20 +272,18 @@ def delete(id):
 
 @app.route("/like/<int:id>")
 def like(id):
-    conn = sqlite3.connect("college_intel.db")
-    c = conn.cursor()
-    
-    c.execute("UPDATE tips SET likes=likes+1 WHERE id=?",(id,))
-    c.execute("SELECT senior_name, title FROM tips WHERE id=?",(id,))
-    tip = c.fetchone()
-    
-    c.execute("INSERT INTO notifications(username, message) VALUES(?,?)",
-              tip[0],
-              session["user"] + " like your tip: " + tip[1])
-    
+
+    conn=sqlite3.connect("college_intel.db")
+    c=conn.cursor()
+
+    c.execute(
+        "UPDATE tips SET likes=likes+1 WHERE id=?",
+        (id,)
+    )
+
     conn.commit()
     conn.close()
-    
+
     return redirect("/")
 
 @app.route("/edit/<int:id>")
@@ -322,39 +320,49 @@ def edit(id):
 
 @app.route("/bookmark/<int:id>")
 def bookmark(id):
+
     if "user" not in session:
         return redirect("/login")
-    conn = sqlite3.connect("college_intel.db")
-    c = conn.cursor()
-    
+
+    conn=sqlite3.connect("college_intel.db")
+    c=conn.cursor()
+
     c.execute(
         "INSERT INTO bookmarks(username,tip_id) VALUES(?,?)",
-        (session["user"], id)
+        (
+            session["user"],
+            id
+        )
     )
-    
+
     conn.commit()
     conn.close()
-    
+
     return redirect("/")
 
-@app.route("/comment/<int:id>",methods=["POST"])
+@app.route("/comment/<int:id>", methods=["POST"])
 def comment(id):
-    
+
     if "user" not in session:
         return redirect("/login")
-    
-    username = session["user"]
-    text = request.form["comment"]
-    
+
+    comment = request.form["comment"]
+
     conn = sqlite3.connect("college_intel.db")
     c = conn.cursor()
-    
-    c.execute("INSERT INTO comments(tip_id,username,comment,created_at) VALUES(?,?,?,?)",
-              (id, username, text, datetime.now().strftime("%d-%m-%Y %I:%M %p"))
+
+    c.execute(
+        "INSERT INTO comments(tip_id,username,comment) VALUES(?,?,?)",
+        (
+            id,
+            session["user"],
+            comment
+        )
     )
+
     conn.commit()
     conn.close()
-    
+
     return redirect("/")
 
 @app.route("/saved")
