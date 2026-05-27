@@ -500,18 +500,5 @@ def page_not_found(e):
         "404.html"
     ),404
 
-@app.route("/make_admin")
-def make_admin():
-
-    conn=sqlite3.connect("college_intel.db")
-    c=conn.cursor()
-
-    c.execute("UPDATE users SET role='Admin' WHERE username='Satyam'")
-
-    conn.commit()
-    conn.close()
-
-    return "Admin created"
-
 if __name__ == "__main__":
     app.run(debug = True)
