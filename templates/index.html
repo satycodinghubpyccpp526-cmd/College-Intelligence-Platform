@@ -175,7 +175,7 @@
                 <button>👌 Verify</button>
             </a>
             
-            {% if session.role=="Admin" %}
+            {% if session.role=="Admin" or session.user==tip[1] %}
             <a href="/delete/{{tip[0]}}">
                 <button>❎ Delete</button>
             </a>
